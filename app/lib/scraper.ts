@@ -44,22 +44,21 @@ async function scrollFeed(page: Page, maxScrolls = 15): Promise<void> {
  */
 export async function scrapeGoogleMaps(
   query: string,
-  location: string
+  location: string,
+  showProcess: boolean = false
 ): Promise<ScrapedBusiness[]> {
   let browser: Browser | null = null;
 
   try {
     browser = await puppeteer.launch({
-      headless: true,
+      headless: !showProcess, // Toggle UI based on user preference
+      defaultViewport: { width: 1280, height: 800 }, // Ukuran window yang lebih besar
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
         "--disable-dev-shm-usage",
-        "--disable-accelerated-2d-canvas",
         "--no-first-run",
         "--no-zygote",
-        "--single-process",
-        "--disable-gpu",
         "--lang=id-ID,id",
         "--accept-lang=id-ID,id",
       ],

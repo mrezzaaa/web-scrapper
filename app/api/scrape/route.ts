@@ -7,7 +7,7 @@ export const maxDuration = 120; // Allow up to 2 minutes for scraping
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { query, location } = body as { query?: string; location?: string };
+    const { query, location, showProcess } = body as { query?: string; location?: string; showProcess?: boolean };
 
     if (!query || !location) {
       return Response.json(
@@ -16,9 +16,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log(`[API/scrape] Starting scrape: "${query}" di "${location}"`);
+    console.log(`[API/scrape] Starting scrape: "${query}" di "${location}" (showProcess: ${showProcess})`);
 
-    const businesses = await scrapeGoogleMaps(query, location);
+    const businesses = await scrapeGoogleMaps(query, location, showProcess);
 
     if (businesses.length === 0) {
       return Response.json(

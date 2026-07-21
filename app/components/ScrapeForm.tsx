@@ -19,6 +19,7 @@ interface ScrapeFormProps {
 export default function ScrapeForm({ onScrapeComplete }: ScrapeFormProps) {
   const [query, setQuery] = useState("");
   const [location, setLocation] = useState("");
+  const [showProcess, setShowProcess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<ScrapeResult | null>(null);
 
@@ -33,7 +34,7 @@ export default function ScrapeForm({ onScrapeComplete }: ScrapeFormProps) {
       const response = await fetch("/api/scrape", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: query.trim(), location: location.trim() }),
+        body: JSON.stringify({ query: query.trim(), location: location.trim(), showProcess }),
       });
 
       const data: ScrapeResult = await response.json();
@@ -147,6 +148,21 @@ export default function ScrapeForm({ onScrapeComplete }: ScrapeFormProps) {
               ))}
             </div>
           </div>
+        </div>
+
+        {/* Show Process Toggle */}
+        <div className="form-field-group" style={{ flexDirection: "row", alignItems: "center", gap: "8px", marginTop: "12px" }}>
+          <input 
+            type="checkbox" 
+            id="show-process-toggle"
+            checked={showProcess}
+            onChange={(e) => setShowProcess(e.target.checked)}
+            disabled={isLoading}
+            style={{ width: "16px", height: "16px", accentColor: "var(--brand-primary)", cursor: "pointer" }}
+          />
+          <label htmlFor="show-process-toggle" style={{ fontSize: "13px", color: "var(--text-secondary)", cursor: "pointer" }}>
+            Tampilkan Proses Scraping di Browser (High Tech Mode)
+          </label>
         </div>
 
         <button
