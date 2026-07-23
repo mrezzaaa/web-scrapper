@@ -152,8 +152,13 @@ export async function scrapeGoogleMaps(
         const rating = ratingText ? parseFloat(ratingText) : null;
 
         // Check for website link
-        const websiteLink = card.querySelector('a[data-value="Website"]');
-        const hasWebsite = websiteLink !== null;
+        const allLinks = Array.from(card.querySelectorAll('a'));
+        const websiteLink = allLinks.find(a => {
+          const text = a.textContent?.trim().toLowerCase() || "";
+          return text.includes("website") || text.includes("situs web");
+        });
+        
+        const hasWebsite = websiteLink !== undefined;
         const website = hasWebsite
           ? websiteLink?.getAttribute("href") ?? null
           : null;

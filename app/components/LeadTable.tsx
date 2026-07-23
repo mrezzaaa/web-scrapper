@@ -11,6 +11,7 @@ import {
   ExternalLink,
   Tag,
   Building2,
+  CheckCircle2,
 } from "lucide-react";
 
 export interface Lead {
@@ -77,6 +78,8 @@ function StarRating({ rating }: { rating: number | null }) {
 
 export default function LeadTable({ leads, onDelete, whatsappTemplate }: LeadTableProps) {
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [sentIds, setSentIds] = useState<Set<string>>(new Set());
+  const [savingId, setSavingId] = useState<string | null>(null);
 
   const handleDelete = async (id: string) => {
     if (!confirm("Hapus lead ini?")) return;
@@ -86,6 +89,33 @@ export default function LeadTable({ leads, onDelete, whatsappTemplate }: LeadTab
       onDelete(id);
     } finally {
       setDeletingId(null);
+    }
+  };
+
+  const handleMarkSent = async (lead: Lead) => {
+    if (sentIds.has(lead.id)) return; // already saved
+    setSavingId(lead.id);
+    try {
+      const formattedMessage = whatsappTemplate.replace(/{name}/g, lead.title);
+      const res = await fetch("/api/history", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          originalLeadId: lead.id,
+          title: lead.title,
+          category: lead.category,
+          address: lead.address,
+          phone: lead.phone,
+          formattedMessage,
+        }),
+      });
+      if (res.ok) {
+        setSentIds((prev) => new Set(prev).add(lead.id));
+      }
+    } catch (err) {
+      console.error("Failed to save history:", err);
+    } finally {
+      setSavingId(null);
     }
   };
 
@@ -132,7 +162,7 @@ export default function LeadTable({ leads, onDelete, whatsappTemplate }: LeadTab
                 </td>
 
                 {/* Category */}
-                <td className="td-category">
+                <td className="td-category" data-label="Kategori">
                   {lead.category ? (
                     <span className="category-badge">
                       <Tag size={11} />
@@ -144,7 +174,7 @@ export default function LeadTable({ leads, onDelete, whatsappTemplate }: LeadTab
                 </td>
 
                 {/* Address */}
-                <td className="td-address">
+                <td className="td-address" data-label="Alamat">
                   {lead.address ? (
                     <span className="address-text" title={lead.address}>
                       {lead.address}
@@ -155,7 +185,7 @@ export default function LeadTable({ leads, onDelete, whatsappTemplate }: LeadTab
                 </td>
 
                 {/* Phone */}
-                <td className="td-phone">
+                <td className="td-phone" data-label="Telepon">
                   {lead.phone ? (
                     <a href={`tel:${lead.phone}`} className="phone-link">
                       <Phone size={12} />
@@ -167,15 +197,15 @@ export default function LeadTable({ leads, onDelete, whatsappTemplate }: LeadTab
                 </td>
 
                 {/* Rating */}
-                <td className="td-rating">
+                <td className="td-rating" data-label="Rating">
                   <StarRating rating={lead.rating} />
                 </td>
 
                 {/* Website Status Badge */}
-                <td className="td-website">
+                <td className="td-website" data-label="Website">
                   {lead.hasWebsite && lead.website ? (
                     <a
-                      href={lead.website}
+                      href={lead.website.startsWith("/") ? `https://www.google.com${lead.website}` : lead.website}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="website-badge website-badge--has"
@@ -195,7 +225,7 @@ export default function LeadTable({ leads, onDelete, whatsappTemplate }: LeadTab
                 {/* Actions */}
                 <td className="td-actions">
                   <div className="action-buttons">
-                    {/* WhatsApp Button — only show if phone exists and no website */}
+                    {/* WhatsApp Button */}
                     {lead.phone && !lead.hasWebsite && (
                       <a
                         id={`btn-wa-${lead.id}`}
@@ -220,6 +250,21 @@ export default function LeadTable({ leads, onDelete, whatsappTemplate }: LeadTab
                       >
                         <MessageCircle size={14} />
                       </a>
+                    )}
+
+                    {/* Sudah Kirim WA Button — only if phone exists */}
+                    {lead.phone && (
+                      <button
+                        id={`btn-sent-${lead.id}`}
+                        type="button"
+                        className={`btn-mark-sent ${sentIds.has(lead.id) ? "btn-mark-sent--done" : ""}`}
+                        onClick={() => handleMarkSent(lead)}
+                        disabled={sentIds.has(lead.id) || savingId === lead.id}
+                        title={sentIds.has(lead.id) ? "Sudah tersimpan di riwayat" : "Tandai sebagai sudah kirim WA"}
+                      >
+                        <CheckCircle2 size={14} />
+                        <span>{sentIds.has(lead.id) ? "Terkirim" : "Sudah Kirim"}</span>
+                      </button>
                     )}
 
                     {/* Delete Button */}

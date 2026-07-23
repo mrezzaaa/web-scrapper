@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import {
   BarChart3,
   Globe,
@@ -10,12 +10,14 @@ import {
   Filter,
   Database,
   Trash2,
+  History,
 } from "lucide-react";
 import ScrapeForm from "./components/ScrapeForm";
 import LeadTable, { Lead } from "./components/LeadTable";
 import TemplateEditor from "./components/TemplateEditor";
+import Link from "next/link";
 
-const DEFAULT_WA_TEMPLATE = `Halo {name}! 👋\n\nSaya ingin menawarkan jasa pembuatan website profesional untuk bisnis Anda.\n\nDengan website, bisnis Anda akan:\n✅ Lebih mudah ditemukan calon pelanggan\n✅ Terlihat lebih profesional & terpercaya\n✅ Bisa berjualan online 24 jam\n\nHarga mulai dari Rp 1.500.000,- dengan tampilan modern dan mobile-friendly.\n\nBoleh kita diskusi lebih lanjut?`;
+const DEFAULT_WA_TEMPLATE = `Halo {name}! \n\nSaya ingin menawarkan jasa pembuatan website profesional untuk bisnis Anda.\n\nDengan website, bisnis Anda akan:\n- *Lebih mudah* ditemukan calon pelanggan\n- Terlihat lebih *profesional & terpercaya*\n- Bisa berjualan *online 24 jam*\n\nHarga mulai dari *Rp 1.500.000,-* dengan tampilan modern dan mobile-friendly.\n\nBoleh kita diskusi lebih lanjut?`;
 
 interface LeadsResponse {
   leads: Lead[];
@@ -83,15 +85,38 @@ export default function Home() {
     }
   }, []);
 
+  const fetchTemplate = useCallback(async () => {
+    try {
+      const res = await fetch("/api/settings?key=whatsappTemplate");
+      if (res.ok) {
+        const data = await res.json();
+        if (data.value) setWhatsappTemplate(data.value);
+      }
+    } catch (err) {
+      console.error("Failed to fetch template:", err);
+    }
+  }, []);
+
   useEffect(() => {
+    fetchTemplate();
     fetchLeads(1);
     fetchStats();
-  }, [fetchLeads, fetchStats]);
+  }, [fetchLeads, fetchStats, fetchTemplate]);
 
   const handleScrapeComplete = () => {
     fetchLeads(1);
     fetchStats();
   };
+
+  // Scroll to leads section when page changes (skip first render)
+  const isFirstRender = useRef(true);
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    document.getElementById("leads-section")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [pagination.page]);
 
   const handleDelete = (id: string) => {
     setLeads((prev) => prev.filter((l) => l.id !== id));
@@ -121,6 +146,19 @@ export default function Home() {
     }
   };
 
+  const handleSaveTemplate = async (template: string) => {
+    setWhatsappTemplate(template);
+    try {
+      await fetch("/api/settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ key: "whatsappTemplate", value: template }),
+      });
+    } catch (err) {
+      console.error("Failed to save template:", err);
+    }
+  };
+
   return (
     <div className="app-wrapper">
       {/* Header */}
@@ -131,14 +169,15 @@ export default function Home() {
               <Database size={22} />
             </div>
             <div>
-              <h1 className="header-title">LeadMaps</h1>
-              <p className="header-subtitle">Google Maps Lead Generator untuk UMKM</p>
+              <h1 className="header-title">Lead Maps</h1>
+              <p className="header-subtitle">Google Maps Lead Generator</p>
             </div>
           </div>
           <div className="header-meta">
-            <span className="header-badge">
-              🇮🇩 Indonesia
-            </span>
+            <Link href="/history" className="header-nav-link">
+              <History size={16} />
+              <span>Riwayat WA</span>
+            </Link>
           </div>
         </div>
       </header>
@@ -196,13 +235,13 @@ export default function Home() {
           <ScrapeForm onScrapeComplete={handleScrapeComplete} />
           <TemplateEditor 
             template={whatsappTemplate}
-            onSave={setWhatsappTemplate}
+            onSave={handleSaveTemplate}
             defaultTemplate={DEFAULT_WA_TEMPLATE}
           />
         </section>
 
         {/* Leads Table Section */}
-        <section className="leads-section">
+        <section className="leads-section" id="leads-section">
           {/* Section Header & Filters */}
           <div className="leads-header">
             <div className="leads-header-left">

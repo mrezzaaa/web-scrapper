@@ -22,3 +22,19 @@ model Lead {
   locationQuery String
   createdAt     DateTime @default(now())
 }
+
+model Setting {
+  key   String @id
+  value String
+}
+
+model ContactedHistory {
+  id               String   @id @default(cuid())
+  originalLeadId   String?  // Keep reference just in case, though original lead might be deleted
+  title            String
+  category         String?
+  address          String?
+  phone            String?
+  formattedMessage String   // The actual WA message text sent
+  contactedAt      DateTime @default(now())
+}

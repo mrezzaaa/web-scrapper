@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MessageSquare, Save, RotateCcw, Edit2 } from "lucide-react";
 
 interface TemplateEditorProps {
@@ -12,6 +12,10 @@ interface TemplateEditorProps {
 export default function TemplateEditor({ template, onSave, defaultTemplate }: TemplateEditorProps) {
   const [currentTemplate, setCurrentTemplate] = useState(template);
   const [isEditing, setIsEditing] = useState(false);
+
+  useEffect(() => {
+    setCurrentTemplate(template);
+  }, [template]);
 
   const handleSave = () => {
     onSave(currentTemplate);

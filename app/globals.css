@@ -1114,6 +1114,8 @@ textarea {
   white-space: pre-wrap;
   font-family: inherit;
   margin: 0;
+  max-height: 300px;
+  overflow: auto;
 }
 
 /* ============================================================
@@ -1125,4 +1127,418 @@ textarea {
   border-top: 1px solid var(--border-subtle);
   color: var(--text-muted);
   font-size: 12px;
+}
+
+/* ============================================================
+   NAVIGATION HEADER LINK
+   ============================================================ */
+.header-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: rgba(99, 102, 241, 0.12);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  border-radius: var(--radius-md);
+  color: var(--brand-primary);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all var(--transition);
+}
+.header-nav-link:hover {
+  background: rgba(99, 102, 241, 0.22);
+  border-color: var(--brand-primary);
+}
+
+/* ============================================================
+   BTN MARK SENT (Sudah Kirim WA)
+   ============================================================ */
+.btn-mark-sent {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 10px;
+  background: rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  border-radius: var(--radius-md);
+  color: var(--brand-primary);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+.btn-mark-sent:hover:not(:disabled) {
+  background: rgba(99, 102, 241, 0.2);
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.2);
+}
+.btn-mark-sent--done {
+  background: rgba(34, 197, 94, 0.12);
+  border-color: rgba(34, 197, 94, 0.4);
+  color: #4ade80;
+  cursor: default;
+}
+.btn-mark-sent:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ============================================================
+   HISTORY PAGE SPECIFICS
+   ============================================================ */
+.history-page-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(168, 85, 247, 0.2));
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  border-radius: var(--radius-md);
+  color: var(--brand-primary);
+  flex-shrink: 0;
+}
+
+.sent-check-icon {
+  color: #4ade80;
+  flex-shrink: 0;
+}
+
+.business-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.td-date,
+.th-date {
+  width: 140px;
+  min-width: 120px;
+}
+
+.date-text {
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.td-msg,
+.th-msg {
+  width: 90px;
+}
+
+.btn-preview-msg {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 9px;
+  background: rgba(168, 85, 247, 0.1);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  border-radius: var(--radius-md);
+  color: #c084fc;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+.btn-preview-msg:hover {
+  background: rgba(168, 85, 247, 0.2);
+  border-color: #c084fc;
+}
+
+.btn-go-dashboard {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 16px;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+  border: none;
+  border-radius: var(--radius-md);
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all var(--transition);
+}
+.btn-go-dashboard:hover {
+  opacity: 0.85;
+  transform: translateY(-1px);
+}
+
+/* ============================================================
+   MESSAGE PREVIEW MODAL
+   ============================================================ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 20px;
+}
+
+.modal-card {
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  width: 100%;
+  max-width: 520px;
+  overflow: hidden;
+  animation: slideUpFade 0.2s ease;
+}
+
+@keyframes slideUpFade {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.modal-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--brand-primary);
+}
+
+.modal-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.modal-close {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition);
+}
+.modal-close:hover {
+  color: var(--text-primary);
+  background: var(--surface-hover);
+}
+
+.modal-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modal-recipient,
+.modal-sent-time {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.modal-message-box {
+  background: var(--surface-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  margin-top: 6px;
+}
+
+.modal-message-text {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text-primary);
+  white-space: pre-wrap;
+  font-family: inherit;
+  margin: 0;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+/* main-content alias */
+.main-content {
+  flex: 1;
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ============================================================
+   RESPONSIVE MOBILE — TABLE → CARDS
+   ============================================================ */
+@media (max-width: 640px) {
+
+  /* Hide horizontal scroll wrapper, let cards stack */
+  .table-scroll {
+    overflow-x: visible;
+  }
+
+  /* Hide the table header row */
+  .lead-table thead {
+    display: none;
+  }
+
+  /* Make the table itself and tbody block-level */
+  .lead-table,
+  .lead-table tbody {
+    display: block;
+    width: 100%;
+  }
+
+  /* Each row becomes a card */
+  .lead-table .lead-row {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    margin-bottom: 12px;
+    padding: 14px 16px;
+    gap: 0;
+    transition: border-color var(--transition);
+  }
+
+  .lead-table .lead-row:hover {
+    border-color: rgba(99, 102, 241, 0.35);
+    background: var(--surface-card);
+  }
+
+  /* Remove bottom border on individual cells */
+  .lead-table td {
+    border-bottom: none;
+    padding: 4px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 13px;
+  }
+
+  /* Business name — bigger, on top */
+  .lead-table .td-name {
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-subtle);
+    margin-bottom: 8px;
+  }
+
+  .lead-table .td-name .business-name {
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .lead-table .td-name .location-query {
+    margin-top: 3px;
+  }
+
+  /* Add a small label before each field */
+  .lead-table td::before {
+    content: attr(data-label);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    min-width: 62px;
+    padding-top: 2px;
+    flex-shrink: 0;
+  }
+
+  /* Name cell doesn't need a label */
+  .lead-table .td-name::before {
+    display: none;
+  }
+
+  /* Hide the last-child override that removed border */
+  .lead-row:last-child td {
+    border-bottom: none;
+  }
+
+  /* Actions row — push to right */
+  .lead-table .td-actions {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border-subtle);
+    justify-content: flex-end;
+  }
+
+  .lead-table .td-actions::before {
+    display: none;
+  }
+
+  /* Rating + website inline on one row */
+  .lead-table .td-rating,
+  .lead-table .td-website {
+    display: inline-flex;
+  }
+
+  /* Make action buttons slightly bigger for touch */
+  .action-buttons {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .btn-whatsapp,
+  .btn-mark-sent {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  /* Stats grid: 2 columns on mobile */
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  /* Form sections: stack vertically */
+  .form-sections-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Leads controls: wrap */
+  .leads-controls {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .search-form,
+  .search-input {
+    width: 100%;
+  }
+
+  /* Header on mobile: compact */
+  .header-inner {
+    gap: 10px;
+  }
+
+  .header-nav-link span {
+    display: none; /* show icon only on small screens */
+  }
+
+  /* History page adjustments */
+  .history-page-icon {
+    width: 32px;
+    height: 32px;
+  }
 }
